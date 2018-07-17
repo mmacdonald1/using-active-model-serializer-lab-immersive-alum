@@ -8,16 +8,26 @@
 <script type="text/javascript" charset="utf-8">
 $(function() {
   $(".js-more").on("click", function() {
-    var id = $(this).data("id");
-    $.get("/products/" + id + "/description", function(description) {
-      $.get("/products/" + id + "/inventory", function(inventory) {
-        var inventoryText = "<strong>Available</strong>";
-        if(inventory === "false"){
+    let id = $(this).data("id");
+    $.get("/products/" + id + ".json", function(data) {
+      console.log(id)
+      let description = data.description
+      let inventory = data.inventory
+      let orders = data.orders
+        let inventoryText = "<strong>Available</strong>";
+        if(inventory === 0){
           inventoryText = "<strong>Sold Out</strong>";
         }
-        var descriptionText = "<p>" + description + "</p><p>" + inventoryText + "</p>";
+        let descriptionText = "<p>" + description + "</p><p>" + inventoryText + "</p>";
         $("#product-" + id).html(descriptionText);
-      });
+
+
+      orders.forEach((order) => {
+        let productDiv = document.getElementById(`product-${id}`)
+        let orderId= order.id
+        let created= order.created_at
+        productDiv.innerHTML += `<p>Order Id:${orderId} Created At:${created}</p>`
+      })
     });
   });
 });
